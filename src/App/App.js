@@ -7,13 +7,20 @@ import NoteListMain from '../NoteListMain/NoteListMain';
 import NotePageMain from '../NotePageMain/NotePageMain';
 import dummyStore from '../dummy-store';
 import {getNotesForFolder, findNote, findFolder} from '../notes-helpers';
+import  NoteContext  from '../Context/Context'
 import './App.css';
+
+ 
+
+
 
 class App extends Component {
     state = {
         notes: [],
         folders: []
     };
+
+    
 
     componentDidMount() {
         // fake date loading from API call
@@ -62,19 +69,20 @@ class App extends Component {
                         exact
                         key={path}
                         path={path}
-                        render={routeProps => {
-                            const {folderId} = routeProps.match.params;
-                            const notesForFolder = getNotesForFolder(
-                                notes,
-                                folderId
-                            );
-                            return (
-                                <NoteListMain
-                                    {...routeProps}
-                                    notes={notesForFolder}
-                                />
-                            );
-                        }}
+                        render={routeProps => <NoteListMain routeProps={routeProps} /> }
+                        // render={routeProps => {
+                        //     const {folderId} = routeProps.match.params;
+                        //     const notesForFolder = getNotesForFolder(
+                        //         notes,
+                        //         folderId
+                        //     );
+                        //     return (
+                        //         <NoteListMain
+                        //             {...routeProps}
+                        //             notes={notesForFolder}
+                        //         />
+                        //     );
+                        // }}
                     />
                 ))}
                 <Route
@@ -99,10 +107,17 @@ class App extends Component {
                         <FontAwesomeIcon icon="check-double" />
                     </h1>
                 </header>
-                <main className="App__main">{this.renderMainRoutes()}</main>
+                <NoteContext.Provider value={{
+                    notes: this.state.notes,
+                    folders: this.state.folders
+                }}
+                >
+                    <main className="App__main">{this.renderMainRoutes()}</main>
+                </NoteContext.Provider>
             </div>
         );
     }
 }
 
 export default App;
+
