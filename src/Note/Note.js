@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import './Note.css'
 
 export default function Note(props) {
+
   return (
     <div className='Note'>
       <h2 className='Note__title'>

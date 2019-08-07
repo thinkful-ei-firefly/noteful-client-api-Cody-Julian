@@ -1,46 +1,61 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import Note from '../Note/Note'
-import CircleButton from '../CircleButton/CircleButton'
-import {NoteContext} from '../Context/Context'
-import './NoteListMain.css'
+import React from "react";
+import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Note from "../Note/Note";
+import CircleButton from "../CircleButton/CircleButton";
+import NoteContext from "../Context/NoteContext";
+import "./NoteListMain.css";
+import { getNotesForFolder, findFolder } from "../notes-helpers";
 
-console.log(NoteContext)
 export default class NoteListMain extends React.Component {
-
   static contextType = NoteContext;
 
-  render(){
-    const {folders, notes} = this.context
-    console.log(folders)
+  renderList = () => {
+    const { folderId } = this.props.match.params;
+    const { notes, folders } = this.context;
+
+    if (this.props.match.path === "/folder/:folderId") {
+      const foundFolder = findFolder(folders, folderId);
+      if (foundFolder === undefined) {
+        return <h1>Folder Not Found</h1>;
+      }
+    }
+
+    const filteredNotes = getNotesForFolder(notes, folderId);
+
+    if (filteredNotes === undefined) {
+      return <h1>No Notes Found</h1>;
+    }
+
     return (
-      <section className='NoteListMain'>
-        {/* <ul>
-          {props.notes.map(note =>
-            <li key={note.id}>
-              <Note
-                id={note.id}
-                name={note.name}
-                modified={note.modified}
-              />
-            </li>
-          )}
-        </ul>
-        <div className='NoteListMain__button-container'>
+      <ul>
+        {filteredNotes.map(note => (
+          <li key={note.id}>
+            <Note id={note.id} name={note.name} modified={note.modified} />
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
+  render() {
+    return (
+      <section className="NoteListMain">
+        {this.renderList()}
+        <div className="NoteListMain__button-container">
           <CircleButton
             tag={Link}
-            to='/add-note'
-            type='button'
-            className='NoteListMain__add-note-button'
+            to="/add-note"
+            type="button"
+            className="NoteListMain__add-note-button"
           >
-            <FontAwesomeIcon icon='plus' />
+            <FontAwesomeIcon icon="plus" />
             <br />
             Note
           </CircleButton>
-        </div> */}
+        </div>
       </section>
-    )
+    );
   }
 
   // NoteListMain.defaultProps = {
